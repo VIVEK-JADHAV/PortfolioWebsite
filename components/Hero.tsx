@@ -1,13 +1,14 @@
-import React from 'react';
-import { ArrowDown, Linkedin, Mail, MapPin } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowDown, Linkedin, Mail, MapPin, User } from 'lucide-react';
 import { PERSONAL_INFO } from '../constants';
 import { motion } from 'framer-motion';
 
 const Hero: React.FC = () => {
+  const [imgError, setImgError] = useState(false);
   
-  // Using direct path string because importing images (ESM) is not supported in this environment.
-  // Ensure the file is located at 'images/vivek.jpg' in your public/root directory.
-  const profileImg = "images/vivek.jpg";
+  // Changed to local relative path. 
+  // Please ensure 'vivek.jpg' exists in your 'public/images/' directory.
+  const profileImg = "https://raw.githubusercontent.com/VIVEK-JADHAV/PortfolioWebsite/master/public/images/vivekProfile.jpeg";
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
     e.preventDefault();
@@ -101,11 +102,24 @@ const Hero: React.FC = () => {
             <div className="relative w-64 h-64 md:w-80 md:h-80">
               <div className="absolute inset-0 bg-blue-500 rounded-2xl rotate-6 opacity-20 blur-lg animate-pulse"></div>
               <div className="absolute inset-0 border-2 border-blue-500/30 rounded-2xl rotate-6"></div>
-              <img 
-                src={profileImg} 
-                alt={PERSONAL_INFO.name} 
-                className="relative w-full h-full object-cover rounded-2xl shadow-2xl border border-slate-700"
-              />
+              
+              {!imgError ? (
+                <img 
+                  src={profileImg} 
+                  alt={PERSONAL_INFO.name} 
+                  className="relative w-full h-full object-cover rounded-2xl shadow-2xl border border-slate-700"
+                  onError={() => {
+                    // Simple string logging to avoid circular JSON structure errors
+                    console.error("Failed to load profile image from path:", profileImg);
+                    setImgError(true);
+                  }}
+                />
+              ) : (
+                <div className="relative w-full h-full flex flex-col items-center justify-center bg-slate-800 rounded-2xl border border-slate-700">
+                  <User className="w-20 h-20 text-slate-600 mb-2" />
+                  <span className="text-slate-500 text-sm font-medium">Image not found</span>
+                </div>
+              )}
             </div>
           </motion.div>
 
